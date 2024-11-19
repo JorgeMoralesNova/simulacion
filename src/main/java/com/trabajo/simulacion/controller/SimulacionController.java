@@ -37,11 +37,12 @@ public class SimulacionController {
             @RequestParam(value = "q", required = false, defaultValue = "19") String qStr,
             Model modelo
     ) {
-        // Convertir los parámetros de cadena a BigInteger
-        BigInteger semilla = new BigInteger(semillaStr);
-        List<BigInteger> resultados;
-
         try {
+            // Convertir los parámetros de cadena a BigInteger
+            BigInteger semilla = new BigInteger(semillaStr);
+            List<BigInteger> resultados;
+
+            // Selección del algoritmo
             switch (algoritmo) {
                 case "cuadradosMedios":
                     resultados = simulacionService.cuadradosMedios(semilla, iteraciones);
@@ -59,7 +60,7 @@ public class SimulacionController {
 
                     // Validaciones específicas para Blum Blum Shub
                     if (!p.isProbablePrime(100) || !q.isProbablePrime(100)) {
-                        throw new IllegalArgumentException("p y q deben ser primos.");
+                        throw new IllegalArgumentException("p y q deben ser números primos.");
                     }
                     if (!p.mod(BigInteger.valueOf(4)).equals(BigInteger.valueOf(3)) ||
                             !q.mod(BigInteger.valueOf(4)).equals(BigInteger.valueOf(3))) {
@@ -71,22 +72,30 @@ public class SimulacionController {
                 default:
                     throw new IllegalArgumentException("Algoritmo no reconocido: " + algoritmo);
             }
-        } catch (Exception e) {
-            modelo.addAttribute("error", "Error al ejecutar la simulación: " + e.getMessage());
-            return "error";
-        }
 
-        // Agregar resultados y algoritmo al modelo
-        modelo.addAttribute("resultados", resultados);
-        modelo.addAttribute("algoritmo", algoritmo); // Algoritmo seleccionado
-        return "resultados";
+            // Agregar resultados al modelo
+            modelo.addAttribute("resultados", resultados);
+            modelo.addAttribute("algoritmo", algoritmo);
+            return "resultados";
+
+        } catch (Exception e) {
+            // Manejo del error
+            modelo.addAttribute("error", "Error al ejecutar la simulación: " + e.getMessage());
+            return "error"; // Redirige a la vista de error
+        }
     }
 
     @GetMapping("/exportar")
     public String exportarExcel(Model modelo) throws IOException {
-        // Genera el archivo Excel temporal
-        File archivoExcel = simulacionService.generarExcelTemporal();
-        modelo.addAttribute("archivoExcel", archivoExcel.getName());
-        return "descargar";
+        try {
+            // Genera el archivo Excel temporal
+            File archivoExcel = simulacionService.generarExcelTemporal();
+            modelo.addAttribute("archivoExcel", archivoExcel.getName());
+            return "descargar";
+        } catch (Exception e) {
+            // Manejo del error en la exportación
+            modelo.addAttribute("error", "Error al exportar a Excel: " + e.getMessage());
+            return "error";
+        }
     }
 }
