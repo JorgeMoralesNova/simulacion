@@ -95,7 +95,7 @@
   <form action="/ejecutar" method="post" class="mx-auto" style="max-width: 500px;">
     <div class="mb-3">
       <label for="algoritmo">Algoritmo:</label>
-      <select id="algoritmo" name="algoritmo" class="form-select" required>
+      <select id="algoritmo" name="algoritmo" class="form-select" required onchange="mostrarOpciones()">
         <option value="cuadradosMedios">Cuadrados Medios</option>
         <option value="congruencialCuadratico">Congruencial Cuadrático</option>
         <option value="blumBlumShub">Blum Blum Shub</option>
@@ -103,13 +103,45 @@
     </div>
     <div class="mb-3">
       <label for="semilla">Semilla:</label>
-      <!-- Cambiado a type="text" para soportar BigInteger -->
       <input type="text" id="semilla" name="semilla" class="form-control" pattern="\d+" title="Ingrese un número entero positivo" required>
     </div>
     <div class="mb-3">
       <label for="iteraciones">Iteraciones:</label>
-      <input type="number" id="iteraciones" name="iteraciones" class="form-control" required>
+      <input type="number" id="iteraciones" name="iteraciones" class="form-control" min="1" required>
     </div>
+
+    <!-- Opciones para Congruencial Cuadrático -->
+    <div id="opcionesCuadratico" style="display: none;">
+      <div class="mb-3">
+        <label for="a">Parámetro a (Congruencial Cuadrático):</label>
+        <input type="text" id="a" name="a" class="form-control" placeholder="Opcional (valor predeterminado: 0)">
+      </div>
+      <div class="mb-3">
+        <label for="b">Parámetro b (Congruencial Cuadrático):</label>
+        <input type="text" id="b" name="b" class="form-control" placeholder="Opcional (valor predeterminado: 0)">
+      </div>
+      <div class="mb-3">
+        <label for="c">Parámetro c (Congruencial Cuadrático):</label>
+        <input type="text" id="c" name="c" class="form-control" placeholder="Opcional (valor predeterminado: 0)">
+      </div>
+      <div class="mb-3">
+        <label for="modulo">Módulo (Congruencial Cuadrático):</label>
+        <input type="text" id="modulo" name="modulo" class="form-control" placeholder="Opcional (valor predeterminado: 10000)">
+      </div>
+    </div>
+
+    <!-- Opciones para Blum Blum Shub -->
+    <div id="opcionesBlumBlum" style="display: none;">
+      <div class="mb-3">
+        <label for="p">Parámetro p (Blum Blum Shub):</label>
+        <input type="text" id="p" name="p" class="form-control" placeholder="Opcional (valor predeterminado: 11)">
+      </div>
+      <div class="mb-3">
+        <label for="q">Parámetro q (Blum Blum Shub):</label>
+        <input type="text" id="q" name="q" class="form-control" placeholder="Opcional (valor predeterminado: 19)">
+      </div>
+    </div>
+
     <div class="text-center">
       <button type="submit" class="btn btn-primary">Ejecutar</button>
     </div>
@@ -119,5 +151,18 @@
     <a href="/exportar" class="btn btn-link"><i class="fas fa-file-export"></i> Exportar a Excel</a>
   </div>
 </div>
+
+<!-- JavaScript -->
+<script>
+  function mostrarOpciones() {
+    const algoritmo = document.getElementById("algoritmo").value;
+    document.getElementById("opcionesCuadratico").style.display = algoritmo === "congruencialCuadratico" ? "block" : "none";
+    document.getElementById("opcionesBlumBlum").style.display = algoritmo === "blumBlumShub" ? "block" : "none";
+  }
+
+  // Mostrar opciones iniciales según el algoritmo seleccionado por defecto
+  window.onload = mostrarOpciones;
+</script>
+
 </body>
 </html>

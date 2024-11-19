@@ -27,13 +27,6 @@ public class SimulacionService {
     @Autowired
     private SimulacionRepository simulacionRepository;
 
-    /**
-     * Genera números pseudoaleatorios utilizando el método de Cuadrados Medios.
-     *
-     * @param semilla Semilla inicial para el generador.
-     * @param iteraciones Número máximo de iteraciones.
-     * @return Lista de números generados.
-     */
 
 
     public List<BigInteger> cuadradosMedios(BigInteger semilla, int iteraciones) {
@@ -85,30 +78,105 @@ public class SimulacionService {
 
 
 
-    // Algoritmo Congruencial Cuadrático
-    public List<BigInteger> congruencialCuadratico(BigInteger a, BigInteger b, BigInteger c, BigInteger semilla, int iteraciones) {
-        List<BigInteger> resultados = new ArrayList<>();
-        BigInteger actual = semilla;
-        BigInteger mod = BigInteger.valueOf(10000); // Modulo arbitrario
-        for (int i = 0; i < iteraciones; i++) {
-            actual = (a.multiply(actual).multiply(actual).add(b.multiply(actual)).add(c)).mod(mod);
-            resultados.add(actual);
+    public List<BigInteger> congruencialCuadratico(BigInteger a, BigInteger b, BigInteger c, BigInteger semilla, int iteraciones, BigInteger modulo) {
+        // Validaciones iniciales
+        if (a == null || b == null || c == null || semilla == null || modulo == null) {
+            throw new IllegalArgumentException("Ninguno de los parámetros puede ser nulo.");
         }
-        guardarSimulacion("Congruencial Cuadrático", semilla, iteraciones, resultados.toString());
+        if (modulo.compareTo(BigInteger.ZERO) <= 0) {
+            throw new IllegalArgumentException("El módulo debe ser un número positivo.");
+        }
+        if (iteraciones <= 0) {
+            throw new IllegalArgumentException("El número de iteraciones debe ser mayor a cero.");
+        }
+
+        List<BigInteger> resultados = new ArrayList<>();
+        Set<BigInteger> vistos = new HashSet<>(); // Para detectar ciclos
+        BigInteger actual = semilla;
+
+        for (int i = 0; i < iteraciones; i++) {
+            // Fórmula congruencial cuadrática
+            actual = (a.multiply(actual).multiply(actual).add(b.multiply(actual)).add(c)).mod(modulo);
+
+            // Registro detallado de cada iteración
+            System.out.println("Iteración " + i + ": Resultado=" + actual);
+
+            // Detectar ciclos
+            if (vistos.contains(actual)) {
+                System.out.println("Ciclo detectado en la iteración " + i + ": Número repetido: " + actual);
+                break;
+            }
+
+            resultados.add(actual);
+            vistos.add(actual);
+        }
+
+        // Manejo de errores en guardarSimulacion
+        try {
+            guardarSimulacion("Congruencial Cuadrático", semilla, iteraciones, resultados.toString());
+        } catch (Exception e) {
+            System.err.println("Error al guardar la simulación: " + e.getMessage());
+        }
+
         return resultados;
     }
 
     // Algoritmo Blum Blum Shub
-    public List<BigInteger> blumBlumShub(BigInteger semilla, int iteraciones) {
-        List<BigInteger> resultados = new ArrayList<>();
-        BigInteger p = BigInteger.valueOf(11), q = BigInteger.valueOf(19); // Primos grandes
-        BigInteger n = p.multiply(q);
-        BigInteger actual = semilla;
-        for (int i = 0; i < iteraciones; i++) {
-            actual = actual.multiply(actual).mod(n);
-            resultados.add(actual.mod(BigInteger.TWO));
+    // Algoritmo Blum Blum Shub mejorado
+    public List<BigInteger> blumBlumShub(BigInteger semilla, int iteraciones, BigInteger p, BigInteger q) {
+        // Validaciones iniciales
+        if (p == null || q == null || semilla == null) {
+            throw new IllegalArgumentException("Ninguno de los parámetros puede ser nulo.");
         }
-        guardarSimulacion("Blum Blum Shub", semilla, iteraciones, resultados.toString());
+        if (!p.isProbablePrime(100) || !q.isProbablePrime(100)) {
+            throw new IllegalArgumentException("Los valores de p y q deben ser primos.");
+        }
+        if (!p.mod(BigInteger.valueOf(4)).equals(BigInteger.valueOf(3)) ||
+                !q.mod(BigInteger.valueOf(4)).equals(BigInteger.valueOf(3))) {
+            throw new IllegalArgumentException("Los valores de p y q deben ser congruentes a 3 mod 4.");
+        }
+        if (semilla.compareTo(BigInteger.ZERO) <= 0 || semilla.compareTo(p.multiply(q)) >= 0) {
+            throw new IllegalArgumentException("La semilla debe estar en el rango (0, p*q).");
+        }
+        if (iteraciones <= 0) {
+            throw new IllegalArgumentException("El número de iteraciones debe ser mayor a cero.");
+        }
+
+        // Inicialización del módulo n
+        BigInteger n = p.multiply(q);
+
+        // Variables para el cálculo
+        List<BigInteger> resultados = new ArrayList<>();
+        Set<BigInteger> vistos = new HashSet<>(); // Para detectar ciclos
+        BigInteger actual = semilla;
+
+        for (int i = 0; i < iteraciones; i++) {
+            // Fórmula Blum Blum Shub
+            actual = actual.multiply(actual).mod(n);
+
+            // Extraer el bit menos significativo como resultado
+            BigInteger bit = actual.mod(BigInteger.TWO);
+            resultados.add(bit);
+
+            // Log detallado de cada iteración
+            System.out.println("Iteración " + i + ": Número generado=" + actual + ", Bit=" + bit);
+
+            // Detectar ciclos
+            if (vistos.contains(actual)) {
+                System.out.println("Ciclo detectado en la iteración " + i + ": Número repetido: " + actual);
+                break;
+            }
+
+            vistos.add(actual);
+        }
+
+        // Manejo de errores en guardarSimulacion
+        try {
+            guardarSimulacion("Blum Blum Shub", semilla, iteraciones, resultados.toString());
+        } catch (Exception e) {
+            System.err.println("Error al guardar la simulación: " + e.getMessage());
+        }
+
         return resultados;
     }
 
