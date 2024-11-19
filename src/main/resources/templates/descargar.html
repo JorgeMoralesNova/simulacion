@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Descargar Excel</title>
+</head>
+<body>
+<h2>Archivo generado exitosamente</h2>
+<a th:href="@{'/archivos/' + ${archivoExcel}}" download>Haz clic aquí para descargar el archivo</a>
+<br>
+<a href="/">Volver al inicio</a>
+</body>
+</html>

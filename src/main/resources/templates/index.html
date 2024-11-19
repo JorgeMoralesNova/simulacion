@@ -1,0 +1,18 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/header.html"></div>
+
+<form action="/ejecutar" method="post">
+  <label>Algoritmo:</label>
+  <select name="algoritmo">
+    <option value="cuadradosMedios">Cuadrados Medios</option>
+    <option value="congruencialCuadratico">Congruencial Cuadrático</option>
+    <option value="blumBlumShub">Blum Blum Shub</option>
+  </select>
+  <label>Semilla:</label>
+  <input type="number" name="semilla" required>
+  <label>Iteraciones:</label>
+  <input type="number" name="iteraciones" required>
+  <button type="submit">Ejecutar</button>
+</form>
+<a href="/exportar">Exportar a Excel</a>
