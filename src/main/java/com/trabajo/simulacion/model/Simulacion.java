@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.math.BigInteger;
 
 @Entity
 public class Simulacion {
@@ -13,14 +14,14 @@ public class Simulacion {
     private Long id;
 
     private String algoritmo;
-    private int semilla;
+    private BigInteger semilla; // Cambiado a BigInteger
     private int iteraciones;
     private String resultados;
 
     // Constructor, Getters y Setters
     public Simulacion() {}
 
-    public Simulacion(String algoritmo, int semilla, int iteraciones, String resultados) {
+    public Simulacion(String algoritmo, BigInteger semilla, int iteraciones, String resultados) {
         this.algoritmo = algoritmo;
         this.semilla = semilla;
         this.iteraciones = iteraciones;
@@ -28,7 +29,6 @@ public class Simulacion {
     }
 
     // Getters y setters aquí
-
 
     public Long getId() {
         return id;
@@ -46,11 +46,11 @@ public class Simulacion {
         this.algoritmo = algoritmo;
     }
 
-    public int getSemilla() {
+    public BigInteger getSemilla() {
         return semilla;
     }
 
-    public void setSemilla(int semilla) {
+    public void setSemilla(BigInteger semilla) {
         this.semilla = semilla;
     }
 

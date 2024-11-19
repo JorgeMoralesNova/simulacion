@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class SimulacionController {
     @Autowired
     private SimulacionService simulacionService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String inicio() {
         return "index";
     }
@@ -27,14 +28,20 @@ public class SimulacionController {
     @PostMapping("/ejecutar")
     public String ejecutarSimulacion(
             @RequestParam("algoritmo") String algoritmo,
-            @RequestParam("semilla") int semilla,
+            @RequestParam("semilla") String semillaStr, // Cambiar a String para parsear a BigInteger
             @RequestParam("iteraciones") int iteraciones,
-            @RequestParam(value = "a", required = false, defaultValue = "0") int a,
-            @RequestParam(value = "b", required = false, defaultValue = "0") int b,
-            @RequestParam(value = "c", required = false, defaultValue = "0") int c,
+            @RequestParam(value = "a", required = false, defaultValue = "0") String aStr,
+            @RequestParam(value = "b", required = false, defaultValue = "0") String bStr,
+            @RequestParam(value = "c", required = false, defaultValue = "0") String cStr,
             Model modelo
     ) {
-        List<Integer> resultados;
+        // Convertir los parámetros de cadena a BigInteger
+        BigInteger semilla = new BigInteger(semillaStr);
+        BigInteger a = new BigInteger(aStr);
+        BigInteger b = new BigInteger(bStr);
+        BigInteger c = new BigInteger(cStr);
+
+        List<BigInteger> resultados;
         switch (algoritmo) {
             case "cuadradosMedios":
                 resultados = simulacionService.cuadradosMedios(semilla, iteraciones);
