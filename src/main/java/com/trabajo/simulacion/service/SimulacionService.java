@@ -190,33 +190,7 @@ public class SimulacionService {
     }
 
 
-    public void exportarExcel(OutputStream outputStream) throws IOException {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet hoja = workbook.createSheet("Simulaciones");
 
-        // Cabecera
-        Row cabecera = hoja.createRow(0);
-        cabecera.createCell(0).setCellValue("ID");
-        cabecera.createCell(1).setCellValue("Algoritmo");
-        cabecera.createCell(2).setCellValue("Semilla");
-        cabecera.createCell(3).setCellValue("Iteraciones");
-        cabecera.createCell(4).setCellValue("Resultados");
-
-        // Datos
-        List<Simulacion> simulaciones = obtenerTodasSimulaciones();
-        int numFila = 1;
-        for (Simulacion sim : simulaciones) {
-            Row fila = hoja.createRow(numFila++);
-            fila.createCell(0).setCellValue(sim.getId());
-            fila.createCell(1).setCellValue(sim.getAlgoritmo());
-            fila.createCell(2).setCellValue(sim.getSemilla().intValue());
-            fila.createCell(3).setCellValue(sim.getIteraciones());
-            fila.createCell(4).setCellValue(sim.getResultados());
-        }
-
-        workbook.write(outputStream);
-        workbook.close();
-    }
 
 
 
